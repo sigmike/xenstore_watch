@@ -27,3 +27,5 @@ stamp-h.in
 .deps
 *.lsm
 *.spec
+*.info
+xenstore_watch

@@ -37,5 +37,10 @@ AC_CHECK_FUNC(mknod)
 dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
+AC_CHECK_LIB([xenstore], [xs_read], [
+    LIBS="$LIBS -lxenstore"
+  ],[
+    AC_MSG_ERROR([Cannot find a xenstore library])
+])
 
 AC_OUTPUT(Makefile xenstore_watch.lsm xenstore_watch.spec)

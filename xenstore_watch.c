@@ -77,6 +77,9 @@ main (int argc, char **argv)
   program_name = argv[0];
 
   i = decode_switches (argc, argv);
+  
+  if (argc - i < 2)
+    usage(1);
 
   /* Get a connection to the daemon */
   xs = xs_daemon_open();
@@ -173,7 +176,7 @@ usage (int status)
 {
   printf (_("%s - \
 Watches changes in XenStore\n"), program_name);
-  printf (_("Usage: %s [OPTION]... [FILE]...\n"), program_name);
+  printf (_("Usage: %s [OPTION]... PATH PROGRAM [ARGUMENT]...\n"), program_name);
   printf (_("\
 Options:\n\
   --verbose                  print more information\n\

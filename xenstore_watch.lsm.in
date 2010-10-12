@@ -1,0 +1,21 @@
+Begin3
+Title:		xenstore_watch
+Version:	@VERSION@
+Entered-date:	@ISODATE@
+Description:	Watches changes in XenStore
+		@configure_input@
+		Please edit xenstore_watch.lsm.in to fix the Keywords and
+		Primary-site entries, add several more lines of
+		description here if appropriate, and to delete these
+		instructions.
+Keywords:	[substitute your keywords here]
+Author: 	mike@lepton.fr (Michael Witrant)
+Maintained-by:	mike@lepton.fr (Michael Witrant)
+Primary-site:	metlab.unc.edu pub/Linux/apps/some/directory
+		31k xenstore_watch-@VERSION@.tar.gz
+		500  xenstore_watch.lsm
+Alternate-site: 
+Original-site:  
+Platforms:      
+Copying-policy:	GNU copyleft
+End

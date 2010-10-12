@@ -73,27 +73,43 @@ main (int argc, char **argv)
   unsigned int num_strings;
   char * buf;
   unsigned int len;
+  char *program;
+  char **arguments;
+  int arguments_count;
 
   program_name = argv[0];
 
   i = decode_switches (argc, argv);
   
-  if (argc - i < 2)
+  if (argc - i < 1)
     usage(1);
-
+  
+  path = argv[i++];
+  if (argc - i > 0)
+  {
+    program = argv[i++];
+    arguments = argv + i;
+    arguments_count = argc - i;
+  } else
+  {
+    program = NULL;
+    arguments = NULL;
+    arguments_count = 0;
+  }
+  
+  printf("Path: %s\n", path);
+  if (program)
+  {
+    printf("Program: %s", program);
+    for (i=0; i<arguments_count; i++)
+      printf(" %s", arguments[i]);
+    printf("\n");
+  }
+  
   /* Get a connection to the daemon */
   xs = xs_daemon_open();
   if ( xs == NULL ) xs = xs_domain_open();
   if ( xs == NULL ) error();
-
-  /* Get the local domain 0 path */
-  path = xs_get_domain_path(xs, 0);
-  if ( path == NULL ) error();
-
-  /* Make space for our node on the path */
-  path = realloc(path, strlen(path) + strlen("/mynode") + 1);
-  if ( path == NULL ) error();
-  strcat(path, "/mynode");
 
   /* Create a watch on /local/domain/0/mynode. */
   er = xs_watch(xs, path, "mytoken");
@@ -176,7 +192,7 @@ usage (int status)
 {
   printf (_("%s - \
 Watches changes in XenStore\n"), program_name);
-  printf (_("Usage: %s [OPTION]... PATH PROGRAM [ARGUMENT]...\n"), program_name);
+  printf (_("Usage: %s [OPTION]... PATH [PROGRAM [ARGUMENT]...]\n"), program_name);
   printf (_("\
 Options:\n\
   --verbose                  print more information\n\

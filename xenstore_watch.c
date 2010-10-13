@@ -57,7 +57,6 @@ static struct option const long_options[] =
 };
 
 static int decode_switches (int argc, char **argv);
-
 static void error(char *message);
 
 int
@@ -78,6 +77,8 @@ main (int argc, char **argv)
   char *program;
   char **arguments;
   int arguments_count;
+  pid_t pid;
+  int j;
 
   program_name = argv[0];
 
@@ -90,8 +91,13 @@ main (int argc, char **argv)
   if (argc - i > 0)
   {
     program = argv[i++];
-    arguments = argv + i;
     arguments_count = argc - i;
+    
+    arguments = malloc(sizeof(char*) * (argc - i + 2));
+    arguments[0] = program;
+    for (j=0; j<arguments_count; j++)
+      arguments[j + 1] = argv[i + j];
+    arguments[i] = NULL;
   } else
   {
     program = NULL;
@@ -104,7 +110,7 @@ main (int argc, char **argv)
     if (program)
     {
       printf("Program: %s", program);
-      for (i=0; i<arguments_count; i++)
+      for (i=1; i<arguments_count + 1; i++)
         printf(" %s", arguments[i]);
       printf("\n");
     }
@@ -154,8 +160,19 @@ main (int argc, char **argv)
       if (buf)
       {
         if (want_verbose)
-          printf("New value: ");
-        printf("%s\n", buf);
+          printf("New value: %s\n", buf);
+          
+        if (program) {
+          pid = fork();
+          if (pid == 0) {
+            setenv("XENSTORE_WATCH_PATH", vec[XS_WATCH_PATH], 1);
+            setenv("XENSTORE_WATCH_VALUE", buf, 1);
+            execvp(program, arguments);
+          } else {
+            waitpid(pid);
+          }
+        } else if (!want_verbose)
+          printf("%s\n", buf);
       }
     }
   }
@@ -208,7 +225,7 @@ usage (int status)
 {
   printf (_("%s - \
 Watches changes in XenStore\n"), program_name);
-  printf (_("Usage: %s [OPTION]... PATH [PROGRAM [ARGUMENT]...]\n"), program_name);
+  printf (_("Usage: %s [OPTION]... PATH [--] [PROGRAM [ARGUMENT]...]\n"), program_name);
   printf (_("\
 Options:\n\
   --verbose                  print more information\n\

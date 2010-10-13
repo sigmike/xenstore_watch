@@ -58,6 +58,8 @@ static struct option const long_options[] =
 
 static int decode_switches (int argc, char **argv);
 
+static void error(char *message);
+
 int
 main (int argc, char **argv)
 {
@@ -97,23 +99,31 @@ main (int argc, char **argv)
     arguments_count = 0;
   }
   
-  printf("Path: %s\n", path);
-  if (program)
-  {
-    printf("Program: %s", program);
-    for (i=0; i<arguments_count; i++)
-      printf(" %s", arguments[i]);
-    printf("\n");
+  if (want_verbose) {
+    printf("Path: %s\n", path);
+    if (program)
+    {
+      printf("Program: %s", program);
+      for (i=0; i<arguments_count; i++)
+        printf(" %s", arguments[i]);
+      printf("\n");
+    }
   }
   
   /* Get a connection to the daemon */
   xs = xs_daemon_open();
   if ( xs == NULL ) xs = xs_domain_open();
-  if ( xs == NULL ) error();
+  if ( xs == NULL ) {
+    error("Unable to connect to XenStore");
+    exit(1);
+  }
 
   /* Create a watch on /local/domain/0/mynode. */
-  er = xs_watch(xs, path, "mytoken");
-  if ( er == 0 ) error();
+  er = xs_watch(xs, path, "token");
+  if ( er == 0 ) {
+    error("Unable to create watch");
+    exit(1);
+  }
 
   /* We are notified of read availability on the watch via the
    * file descriptor.
@@ -127,19 +137,25 @@ main (int argc, char **argv)
     if ( select(fd + 1, &set, NULL, NULL, &tv) > 0
          && FD_ISSET(fd, &set))
     {
+      //printf("Event triggered\n");
       /* num_strings will be set to the number of elements in vec
        * (typically, 2 - the watched path and the token) */
       vec = xs_read_watch(xs, &num_strings);
-      if ( !vec ) error();
-      printf("vec contents: %s|%s\n", vec[XS_WATCH_PATH],
-                                      vec[XS_WATCH_TOKEN]);
+      if ( !vec ) {
+        error("Unable to read watch");
+        continue;
+      }
+      if (want_verbose)
+        printf("Path changed: %s\n", vec[XS_WATCH_PATH]);
       /* Prepare a transaction and do a read. */
       th = xs_transaction_start(xs);
       buf = xs_read(xs, th, vec[XS_WATCH_PATH], &len);
       xs_transaction_end(xs, th, false);
-      if ( buf )
+      if (buf)
       {
-          printf("buflen: %d\nbuf: %s\n", len, buf);
+        if (want_verbose)
+          printf("New value: ");
+        printf("%s\n", buf);
       }
     }
   }
@@ -148,7 +164,7 @@ main (int argc, char **argv)
   xs_daemon_close(xs);
   free(path);
 
-  exit (0);
+  exit(0);
 }
 
 /* Set all the option flags according to the switches specified.
@@ -200,4 +216,9 @@ Options:\n\
   -V, --version              output version information and exit\n\
 "));
   exit (status);
+}
+
+static void error(char *message)
+{
+  printf("Error: %s\n", message);
 }

@@ -43,4 +43,6 @@ AC_CHECK_LIB([xenstore], [xs_read], [
     AC_MSG_ERROR([Cannot find a xenstore library])
 ])
 
+CFLAGS="$CFLAGS -Wall"
+
 AC_OUTPUT(Makefile xenstore_watch.lsm xenstore_watch.spec)

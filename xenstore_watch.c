@@ -27,6 +27,9 @@
 #include <getopt.h>
 #include "system.h"
 #include <xs.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+              
 
 #define EXIT_FAILURE 1
 
@@ -79,6 +82,8 @@ main (int argc, char **argv)
   int arguments_count;
   pid_t pid;
   int j;
+  char *last_value = NULL;
+  int status;
 
   program_name = argv[0];
 
@@ -143,7 +148,6 @@ main (int argc, char **argv)
     if ( select(fd + 1, &set, NULL, NULL, &tv) > 0
          && FD_ISSET(fd, &set))
     {
-      //printf("Event triggered\n");
       /* num_strings will be set to the number of elements in vec
        * (typically, 2 - the watched path and the token) */
       vec = xs_read_watch(xs, &num_strings);
@@ -159,6 +163,12 @@ main (int argc, char **argv)
       xs_transaction_end(xs, th, false);
       if (buf)
       {
+        if (last_value && strcmp(buf, last_value) == 0) {
+          if (want_verbose)
+            printf("Value did not change\n");
+          continue;
+        }
+      
         if (want_verbose)
           printf("New value: %s\n", buf);
           
@@ -169,10 +179,16 @@ main (int argc, char **argv)
             setenv("XENSTORE_WATCH_VALUE", buf, 1);
             execvp(program, arguments);
           } else {
-            waitpid(pid);
+            waitpid(pid, &status, 0);
           }
-        } else if (!want_verbose)
-          printf("%s\n", buf);
+        } else {
+          if (!want_verbose)
+            printf("%s\n", buf);
+        }
+        
+        if (last_value)
+          free(last_value);
+        last_value = buf;
       }
     }
   }

@@ -28,3 +28,8 @@ stamp-h.in
 *.spec
 *.info
 xenstore_watch
+build-stamp
+debian/files
+debian/xenstore-watch.debhelper.log
+debian/xenstore-watch.substvars
+debian/xenstore-watch/

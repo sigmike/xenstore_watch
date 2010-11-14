@@ -177,6 +177,8 @@ main (int argc, char **argv)
             setenv("XENSTORE_WATCH_PATH", vec[XS_WATCH_PATH], 1);
             setenv("XENSTORE_WATCH_VALUE", buf, 1);
             execvp(program, arguments);
+            error("Unable to start program");
+            exit(1);
           } else {
             waitpid(pid, &status, 0);
           }

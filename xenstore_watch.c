@@ -101,7 +101,7 @@ main (int argc, char **argv)
     arguments[0] = program;
     for (j=0; j<arguments_count; j++)
       arguments[j + 1] = argv[i + j];
-    arguments[i] = NULL;
+    arguments[j + 1] = NULL;
   } else
   {
     program = NULL;

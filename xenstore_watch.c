@@ -72,7 +72,6 @@ main (int argc, char **argv)
   int fd;
   fd_set set;
   int er;
-  struct timeval tv = {.tv_sec = 0, .tv_usec = 0 };
   char **vec;
   unsigned int num_strings;
   char * buf;
@@ -145,7 +144,7 @@ main (int argc, char **argv)
     FD_ZERO(&set);
     FD_SET(fd, &set);
     /* Poll for data. */
-    if ( select(fd + 1, &set, NULL, NULL, &tv) > 0
+    if ( select(fd + 1, &set, NULL, NULL, NULL) > 0
          && FD_ISSET(fd, &set))
     {
       /* num_strings will be set to the number of elements in vec

@@ -1,0 +1,6 @@
+xenstore-watch (0.2-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Michael Witrant <mike@lepton.fr>  Sun, 14 Nov 2010 19:10:50 +0100
+

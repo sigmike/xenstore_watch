@@ -1,0 +1,13 @@
+Source: xenstore-watch
+Section: unknown
+Priority: extra
+Maintainer: Michael Witrant <mike@lepton.fr>
+Build-Depends: debhelper (>= 7), autotools-dev
+Standards-Version: 3.7.3
+Homepage: http://github.com/piglop/xenstore_watch
+
+Package: xenstore-watch
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Watches changes in XenStore
+ Watches changes in XenStore

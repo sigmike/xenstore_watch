@@ -1,0 +1,20 @@
+This package was debianized by Michael Witrant <mike@lepton.fr> on
+Sun, 14 Nov 2010 19:10:50 +0100.
+
+It was downloaded from <https://github.com/piglop/xenstore_watch>
+
+Upstream Author(s):
+
+    Michael Witrant <mike@lepton.fr>
+
+Copyright:
+
+    Copyright (C) 2010 Michael Witrant
+
+License:
+
+    GPL v2
+
+The Debian packaging is (C) 2010, Michael Witrant <mike@lepton.fr> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+

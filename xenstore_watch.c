@@ -176,6 +176,12 @@ main (int argc, char **argv)
           if (pid == 0) {
             setenv("XENSTORE_WATCH_PATH", vec[XS_WATCH_PATH], 1);
             setenv("XENSTORE_WATCH_VALUE", buf, 1);
+            for (i=0; arguments[i]; i++) {
+              if (strcmp(arguments[i], "%v") == 0)
+                arguments[i] = buf;
+              else if (strcmp(arguments[i], "%p") == 0)
+                arguments[i] = vec[XS_WATCH_PATH];
+            }
             execvp(program, arguments);
             error("Unable to start program");
             exit(1);
